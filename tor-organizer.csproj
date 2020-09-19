@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <LangVersion>8.0</LangVersion>
+    <RootNamespace>TorOrganizer</RootNamespace>
+    <TargetFramework>net461</TargetFramework>
+  </PropertyGroup>
+
+</Project>
