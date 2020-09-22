@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,7 +56,8 @@ namespace TorOrganizer
                 }
 
                 var target = Path.Combine(tracker, Path.GetFileName(file));
-                if (File.Exists(target))
+                var exists = File.Exists(target);
+                if (exists && inputs.Overwrite != true)
                 {
                     WriteStatus(file, false, $"Tập tin ở đích đến đã tồn tại!");
                     continue;
@@ -65,15 +66,26 @@ namespace TorOrganizer
                 switch (inputs.Command)
                 {
                     case Commands.Copy:
-                        File.Copy(file, target);
+                        File.Copy(file, target, exists);
                         WriteStatus(file, true, $"Tập tin đã được sao chép đến {target}.");
                         break;
 
                     case Commands.Move:
+                        if (exists)
+                        {
+                            File.Delete(target);
+                        }
+
                         File.Move(file, target);
                         WriteStatus(file, true, $"Tập tin đã được di chuyển đến {target}.");
                         break;
                 }
+            }
+
+            if (inputs.Wait == true)
+            {
+                Console.WriteLine("Bấm phím bất kỳ để thoát...");
+                Console.ReadKey();
             }
         }
 

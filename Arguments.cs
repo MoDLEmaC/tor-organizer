@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 
 namespace TorOrganizer
 {
@@ -21,6 +22,26 @@ namespace TorOrganizer
         /// </summary>
         /// <value>Full path to folder containing target folders.</value>
         public string Destination { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating if process should wait for user to read before exiting.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if process should wait;
+        /// <c>false</c> if process should terminate immediately.
+        /// <c>null</c> if user has not specified.
+        /// </value>
+        public bool? Wait { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating if new files should overwrite existings.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if new files should overwrite old files;
+        /// <c>false</c> if new files should be ignored.
+        /// <c>null</c> if user has not specified.
+        /// </value>
+        public bool? Overwrite { get; set; }
 
         public Arguments()
         {
@@ -54,6 +75,16 @@ namespace TorOrganizer
             else if (source != null)
             {
                 result.Destination = source;
+            }
+
+            if (args.Contains("-w"))
+            {
+                result.Wait = true;
+            }
+
+            if (args.Contains("-f"))
+            {
+                result.Overwrite = true;
             }
 
             return result;

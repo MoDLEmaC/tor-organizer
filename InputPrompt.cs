@@ -37,6 +37,8 @@ namespace TorOrganizer
             inputs.Command = cmd;
             inputs.Source = PromptSource(inputs.Source);
             inputs.Destination = PromptDestination(inputs.Source);
+            inputs.Overwrite = PromptOverwrite();
+            inputs.Wait = PromptWait();
 
             ShowCommand(inputs);
 
@@ -66,6 +68,16 @@ namespace TorOrganizer
             if (args.Destination != args.Source)
             {
                 sb.AppendFormat(" \"{0}\"", args.Destination);
+            }
+
+            if (args.Overwrite == true)
+            {
+                sb.Append(" -f");
+            }
+
+            if (args.Wait == true)
+            {
+                sb.Append(" -w");
             }
 
             var foreground = Console.ForegroundColor;
@@ -150,6 +162,50 @@ namespace TorOrganizer
                 }
 
                 Console.WriteLine($"Thư mục [{full}] không tồn tại!");
+            }
+        }
+
+        private static bool PromptOverwrite()
+        {
+            while (true)
+            {
+                Console.WriteLine("Nếu thư mụu của tracker đã có tập tin cùng tên, bạn có muốn ghi tập tin mới và xoá tập tin cũ không?");
+                Console.WriteLine("Bấm y hoặc yes để ghi đè. Bấm Enter hoặc n hoặc no để bỏ qua tập tin: ");
+
+                var input = Console.ReadLine().Trim().ToLowerInvariant();
+                switch (input)
+                {
+                    case "":
+                    case "n":
+                    case "no":
+                        return false;
+
+                    case "y":
+                    case "yes":
+                        return true;
+                }
+            }
+        }
+
+        private static bool PromptWait()
+        {
+            while (true)
+            {
+                Console.WriteLine("Sau khi hoạt động xong, bạn có muốn phần mềm chờ bạn đọc kết quả không?");
+                Console.WriteLine("Bấm y hoặc yes để phần mềm chờ bạn đọc. Bấm Enter hoặc n hoặc no để tự động thoát: ");
+
+                var input = Console.ReadLine().Trim().ToLowerInvariant();
+                switch (input)
+                {
+                    case "":
+                    case "n":
+                    case "no":
+                        return false;
+
+                    case "y":
+                    case "yes":
+                        return true;
+                }
             }
         }
     }
