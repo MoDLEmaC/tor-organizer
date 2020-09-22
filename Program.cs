@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace TorOrganizer
 {
@@ -16,6 +17,7 @@ namespace TorOrganizer
                 return;
             }
 
+            var regex = new Regex("\\[[^\\]]+]");
             var files = Directory.GetFiles(inputs.Source, "*.torrent");
             var missings = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
             var knowns = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
@@ -23,21 +25,13 @@ namespace TorOrganizer
 
             foreach (var file in files)
             {
-                var name = Path.GetFileName(file);
-                if (name[0] != '[')
+                var match = regex.Match(Path.GetFileNameWithoutExtension(file));
+                if (!match.Success)
                 {
-                    WriteStatus(file, false, "tập tin không có tag của tracker!");
                     continue;
                 }
 
-                var endIndex = name.IndexOf(']');
-                if (endIndex < 2)
-                {
-                    WriteStatus(file, false, "tập tin không có tag của tracker!");
-                    continue;
-                }
-
-                var tag = name.Substring(0, endIndex + 1);
+                var tag = match.Value;
                 if (missings.Contains(tag))
                 {
                     WriteStatus(file, false, $"Không tìm thấy thư mục có tag {tag}!");
@@ -61,7 +55,7 @@ namespace TorOrganizer
                     knowns.Add(tag, tracker);
                 }
 
-                var target = Path.Combine(tracker, name);
+                var target = Path.Combine(tracker, Path.GetFileName(file));
                 if (File.Exists(target))
                 {
                     WriteStatus(file, false, $"Tập tin ở đích đến đã tồn tại!");
