@@ -70,9 +70,15 @@ namespace TorOrganizer
                 sb.AppendFormat(" \"{0}\"", args.Destination);
             }
 
-            if (args.Overwrite == true)
+            switch (args.Overwrite)
             {
-                sb.Append(" -f");
+                case true:
+                    sb.Append(" -f");
+                    break;
+
+                case false:
+                    sb.Append(" -skip");
+                    break;
             }
 
             if (args.Wait == true)
@@ -165,17 +171,19 @@ namespace TorOrganizer
             }
         }
 
-        private static bool PromptOverwrite()
+        private static bool? PromptOverwrite()
         {
             while (true)
             {
                 Console.WriteLine("Nếu thư mụu của tracker đã có tập tin cùng tên, bạn có muốn ghi tập tin mới và xoá tập tin cũ không?");
-                Console.WriteLine("Bấm y hoặc yes để ghi đè. Bấm Enter hoặc n hoặc no để bỏ qua tập tin: ");
+                Console.WriteLine("Bấm Enter để hỏi mỗi lần chạy. Bấm y hoặc yes để ghi đè. Bấm n hoặc no để bỏ qua tập tin: ");
 
                 var input = Console.ReadLine().Trim().ToLowerInvariant();
                 switch (input)
                 {
                     case "":
+                        return null;
+
                     case "n":
                     case "no":
                         return false;

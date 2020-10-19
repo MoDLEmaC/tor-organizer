@@ -86,6 +86,10 @@ namespace TorOrganizer
             {
                 result.Overwrite = true;
             }
+            else if (args.Contains("-skip"))
+            {
+                result.Overwrite = false;
+            }
 
             return result;
         }
@@ -99,9 +103,18 @@ namespace TorOrganizer
 
         private static string? ParseDestination(string[] args)
         {
-            return args.Length >= 3
-                ? Path.GetFullPath(args[2])
-                : null;
+            if (args.Length < 3)
+            {
+                return null;
+            }
+
+            var destination = args[2];
+            if (destination.StartsWith("-"))
+            {
+                return null;
+            }
+
+            return Path.GetFullPath(destination);
         }
 
         private static Commands? ParseCommand(string[] args)
